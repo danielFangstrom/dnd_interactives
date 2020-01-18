@@ -1,0 +1,11 @@
+{
+  "name": "dnd_interactive",
+  "version": "0.0.1",
+  "description": "Interactive Web App for D&D mini games",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ronny Eichler",
+  "license": "ISC"
+}
