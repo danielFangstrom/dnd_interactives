@@ -1,6 +1,6 @@
 {
   "name": "dnd_interactive",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Interactive Web App for D&D mini games",
   "main": "index.js",
   "scripts": {
