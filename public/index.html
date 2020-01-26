@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hello World</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+  .background_panel {
+    background-image: url('images/bg_page01.jpg');
+    height: 1200px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: unset;
+    position: relative;
+    width: 1600px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .canvas_wrapper {
+    position: absolute;
+    top: 70px;
+    left: 95px;
+    z-index: 2;
+  }
+
+  </style>
+</head>
+  <script src="pixi.min.js"></script>
+  <script src="pixi-filters.js"></script>
+<body onLoad='init()'>
+  <div class="background_panel">
+    <div class="canvas_wrapper">
+      <canvas id="pixi_canvas" width="1410" height="1060"></canvas>
+    </div>
+    
+    <script src="util.js"></script>
+    <script src="widgets/matrix.js"></script>
+    <script src="widgets/slider.js"></script>
+    <script src="main.js"></script>
+  </div>
+
+</body>
+</html>

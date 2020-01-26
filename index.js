@@ -1,43 +1,60 @@
-var http = require('http');
-var url = require('url');
-var querystring = require('querystring');
+var express = require('express');
+var handlebars = require('handlebars');
+var fs = require('fs');
+var path = require('path');
+var util = require('util');
 
-var RequestHander = function(req, res) {
-    var page = url.parse(req.url).pathname;
-    var params = querystring.parse(url.parse(req.url).query);
-    console.log(page);
-    console.log(params);
+// command line handling
+const argv = require('yargs')
+    .usage('Usage: $0 [options]')
+    .option('dev', {describe: 'Use development assets and widgets'})
+    .help('h')
+    .alias('h', 'help')
+    .epilog('Ronny and Daniel - 2020')
+    .argv;
+console.log(argv);
 
-    if (page.toLowerCase() == '/gm') {
-        if (!('key' in params) || params['key'] != 'omnomnom') {
-            res.writeHead(300, {"Content-Type": "text/html"});
-            res.end('The gods have not chosen ye!');
-            return;
-        } else {
-            console.log('Admitting GM')
-        }
-    }
-    
-    res.writeHead(200, {"Content-Type": "text/html"});
-    res.write('<!DOCTYPE html>'+
-    '<html>'+
-    ' <head>'+
-    ' <meta charset="utf-8" />'+
-    ' <title>My Node.js page!</title>'+
-    ' </head>'+ 
-    ' <body>'+
-    ' <p>Hello <strong>' + page.slice(1) + '</strong>!</p>'+
-    ' </body>'+
-    '</html>');
-    res.end();
+// use development assets and widgets when `dev` flag was set
+const path_append = argv.dev ? '_dev' : '';
+
+
+var app = express();
+
+app.use(express.static(path.join(__dirname, '/public')));
+
+if (argv.dev) {
+    console.log('Using development assets.')
+    app.use('/images', express.static(path.join(__dirname, '/public/images' + path_append)));
+    app.use('/widgets', express.static(path.join(__dirname, '/public/widgets' + path_append)));
+} else {
+    console.log('Using production assets.')
+    app.use('/images', express.static(path.join(__dirname, '/production/images' + path_append)));
+    app.use('/widgets', express.static(path.join(__dirname, '/production/widgets' + path_append)));
 };
 
-var server = http.createServer(RequestHander);
+app.get('/', function(req, res) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Fill your name');
+});
 
-server.on('close', function() {
-    console.log('Server shutting down.');
-})
+app.get('/gm', function(req, res) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Hi GM! Make them suffer for killing off your Chuul!');
+});
 
-server.listen(8000);
+app.get('/player/:playername', function(req, res) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Suffer for killing off the poor Chuul, ' + req.params.playername);
+});
+
+// app.use(function(req, res, next){
+//     res.setHeader('Content-Type', 'text/plain');
+//     res.send(404, 'You fail your perception check. There doesn\'t seem to be anything here.');
+// });
+
+app.on('get', function(req, res) {console.log(req)});
+
+app.listen(8000);
+
 //server.close();
 
