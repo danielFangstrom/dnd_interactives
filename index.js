@@ -8,11 +8,14 @@ var util = require('util');
 const argv = require('yargs')
     .usage('Usage: $0 [options]')
     .option('dev', {describe: 'Use development assets and widgets'})
+    .default('port', 8000)
     .help('h')
     .alias('h', 'help')
     .epilog('Ronny and Daniel - 2020')
     .argv;
 console.log(argv);
+
+const http_port = argv.port;
 
 // use development assets and widgets when `dev` flag was set
 const path_append = argv.dev ? '_dev' : '';
@@ -54,7 +57,7 @@ app.get('/player/:playername', function(req, res) {
 
 app.on('get', function(req, res) {console.log(req)});
 
-app.listen(8000);
+app.listen(http_port);
 
 //server.close();
 
