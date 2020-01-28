@@ -48,7 +48,7 @@ class Slider {
         };
         knob.mousemove = knob.touchmove = function (event) {
             if (this.dragging) {
-                var newPosition = this.event.data.global;
+                var newPosition = slide.toLocal(this.event.data.global);
                 if (newPosition.x > that.SLIDE_X0 && newPosition.x < that.SLIDE_X0 + that.SLIDE_LENGTH) {
                     this.position.x = newPosition.x;
                 }
