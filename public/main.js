@@ -1,3 +1,28 @@
+//TODO: Adjust timeout intervals to real-world, non-localhost values
+function start_websocket(ws_port) {
+    var ws = new ReconnectingWebSocket("ws://127.0.0.1:" + ws_port.toString());
+    ws.reconnectInterval = 5000;
+    ws.maxReconnectInterval = 10000;
+    ws.timeoutInterval = 1000;
+    return ws;
+}
+
+let ws = start_websocket(8080);
+ws.onmessage = function(event) {
+    if (typeof event.data === 'string') {
+        // parse JSON payload
+        try {
+            var packet = JSON.parse(event.data);
+        } catch (e) {
+            console.log(e);
+            console.log(event.data);
+            return;
+        }
+    } else {
+        console.log(event);
+    }
+};
+
 // Aliases for quick access
 let Application = PIXI.Application,
     resources = PIXI.loader.resources,
@@ -15,6 +40,8 @@ PIXI.utils.sayHello(type);
 var widgets = new Array();
 let state;
 let app;
+var last_update = 0;
+const update_rate = 100; // frames?
 
 const CANVAS_X_OFFSET = 95;
 const CANVAS_Y_OFFSEY = 70;
@@ -61,13 +88,13 @@ function game_init() {
     console.log('Initializing game state')
 
     // matrix widget
-    var matrix = new Matrix();
+    var matrix = new Matrix({widgetID: 0});
     widgets.push(matrix);
     matrix.visual.position.set(550, 450);
 
     // slider widget
     for (let sli = 0; sli < 5; sli++) {
-        var slider = new Slider(8, 300);
+        var slider = new Slider(8, 300, {widgetID: widgets.length+1});
         slider.visual.position.y = 50*sli;
         widgets.push(slider);
     }
@@ -80,6 +107,11 @@ function play(delta) {
     for (let wi = 0; wi < widgets.length; wi++) {
         let widget = widgets[wi];
         widget.update(delta);
+    }
+
+    last_update += delta;
+    if (last_update > update_rate) {
+        last_update = 0;
     }
 }
 

@@ -3,12 +3,14 @@ var handlebars = require('handlebars');
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
+const WebSocket = require('ws');
 
 // command line handling
 const argv = require('yargs')
     .usage('Usage: $0 [options]')
     .option('dev', {describe: 'Use development assets and widgets'})
     .default('port', 8000)
+    .default('wsport', 8080)
     .help('h')
     .alias('h', 'help')
     .epilog('Ronny and Daniel - 2020')
@@ -57,7 +59,49 @@ app.get('/player/:playername', function(req, res) {
 
 app.on('get', function(req, res) {console.log(req)});
 
+console.log('Starting HTTP Server on port ' + argv.port.toString());
 app.listen(http_port);
+
+// Websocket Server
+console.log('Starting Websocket server on port ' + argv.wsport.toString());
+const wss = new WebSocket.Server({ port: argv.wsport });
+
+function heartbeat() {
+    this.isAlive = true;
+}
+
+function noop() {}
+
+wss.on('connection', function connection(ws, request) {
+    // note this does not work behind a proxy, see documentation on how to use the X-Forwarded-For header
+    const ip = request.connection.remoteAddress;
+    console.log('Websocket connection from %s', ip);
+    
+    // preparation for heartbeat detection
+    ws.isAlive = true;
+    ws.on('pong', heartbeat);
+    
+    ws.on('message', function incoming(data) {
+        console.log('received %s', data);
+    });
+
+    ws.on('close', function close(code, reason) {
+        console.log('Client with IP %s terminated with code %d because: %s', ip, code, reason)
+    });
+
+});
+
+const interval = setInterval(function ping() {
+    wss.clients.forEach(function each(ws) {
+        if (ws.isAlive === false){
+            console.log('Connection timeout, terminating.')
+            return ws.terminate();
+        }
+        ws.isAlive = false;
+        ws.ping(noop);
+    });
+}, 3000);
+
 
 //server.close();
 
