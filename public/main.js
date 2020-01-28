@@ -13,6 +13,7 @@ ws.onmessage = function(event) {
         // parse JSON payload
         try {
             var packet = JSON.parse(event.data);
+            console.log(packet);
         } catch (e) {
             console.log(e);
             console.log(event.data);

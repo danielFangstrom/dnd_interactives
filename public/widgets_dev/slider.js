@@ -2,8 +2,9 @@
 PIXI.loader.add(['images/slider_pin.png']);
 
 class Slider {
-    constructor(width, length, notCentered) {
+    constructor(width, length, notCentered, widgetID) {
         console.log('Loading dev slider widget...')
+        this.widgetID = widgetID;
         this.visual = new PIXI.Container();
         this.SLIDE_LENGTH = length;
         this.SLIDE_WIDTH = width;

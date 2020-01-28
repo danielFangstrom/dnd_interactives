@@ -83,6 +83,15 @@ wss.on('connection', function connection(ws, request) {
     
     ws.on('message', function incoming(data) {
         console.log('received %s', data);
+        if (typeof data === 'string') {
+            // TODO: try/except block for parser
+            var packet = JSON.parse(data);
+            console.log(packet);
+            if (packet.widgetID == 0) {
+                console.log('Spreading news');
+                broadcast('{ "news": "spreading", "data": [1, 2, 3]}');
+            }
+        }
     });
 
     ws.on('close', function close(code, reason) {
@@ -90,6 +99,12 @@ wss.on('connection', function connection(ws, request) {
     });
 
 });
+
+function broadcast(message, origin, notself) {
+    wss.clients.forEach(function each(ws) {
+        ws.send(message);
+    });
+}
 
 const interval = setInterval(function ping() {
     wss.clients.forEach(function each(ws) {

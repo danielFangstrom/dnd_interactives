@@ -41,6 +41,11 @@ function Node(m, n, container, trigger_callback) {
         }
         node.draw();
         node.trigger_callback();
+        ws.send(`{"widgetName": "matrix",
+                   "widgetID": ${0},
+                   "update": "node",
+                   "data": [${node.m}, ${node.n}, ${node.state}]
+                }`);
     }
 
     node.gfx
@@ -50,13 +55,14 @@ function Node(m, n, container, trigger_callback) {
     node.container.addChild(node.gfx);
 }
 
-function Matrix() {
+function Matrix(widgetID) {
     const matrix = this;
     matrix.tile_size = 40;
     matrix.M = M;
     matrix.N = N;
     matrix.visual = new PIXI.Container();
     matrix.visual.sortableChildren = true;
+    matrix.widgetID = widgetID;
     console.log('Creating matrix object');
 
     matrix.recalculate = function() {
@@ -73,6 +79,12 @@ function Matrix() {
 
     matrix.update = function(delta) {
         
+    }
+
+    matrix.toString = function() {
+        var state = new Array();
+        matrix.nodes.forEach(rows => { rows.forEach(item => {state.push(item.state); }) });
+        console.log(state);
     }
 
     app.stage.addChild(matrix.visual);
