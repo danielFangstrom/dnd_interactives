@@ -7,23 +7,6 @@ function start_websocket(ws_port) {
     return ws;
 }
 
-let ws = start_websocket(8080);
-ws.onmessage = function(event) {
-    if (typeof event.data === 'string') {
-        // parse JSON payload
-        try {
-            var packet = JSON.parse(event.data);
-            console.log(packet);
-        } catch (e) {
-            console.log(e);
-            console.log(event.data);
-            return;
-        }
-    } else {
-        console.log(event);
-    }
-};
-
 // Aliases for quick access
 let Application = PIXI.Application,
     resources = PIXI.loader.resources,
@@ -73,6 +56,28 @@ function init() {
     }
 }
 
+let ws = start_websocket(8080);
+ws.onmessage = function(event) {
+    if (typeof event.data === 'string') {
+        // parse JSON payload
+        try {
+            var packet = JSON.parse(event.data);
+            console.log(packet);
+            if (packet.widgetID == 0) {
+                widgets[0].update_with(packet);
+            } else {
+                console.error('unknown widget');
+            }
+        } catch (e) {
+            console.log(e);
+            console.log(event.data);
+            return;
+        }
+    } else {
+        console.log(event);
+    }
+};
+
 function setup() {
     //Set the game state
     state = game_init;
@@ -97,6 +102,7 @@ function game_init() {
     for (let sli = 0; sli < 5; sli++) {
         var slider = new Slider(8, 300, {widgetID: widgets.length+1});
         slider.visual.position.y = 50*sli;
+        slider.visual.position.x = 300;
         widgets.push(slider);
     }
     

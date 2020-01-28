@@ -89,7 +89,7 @@ wss.on('connection', function connection(ws, request) {
             console.log(packet);
             if (packet.widgetID == 0) {
                 console.log('Spreading news');
-                broadcast('{ "news": "spreading", "data": [1, 2, 3]}');
+                broadcast(`{ "widgetID": 0, "data": "${packet.data}"}`);
             }
         }
     });

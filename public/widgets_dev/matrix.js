@@ -40,12 +40,8 @@ function Node(m, n, container, trigger_callback) {
             node.state = 0;
         }
         node.draw();
+        // TODO: This should send the action, not trigger a full state update by the parent
         node.trigger_callback();
-        ws.send(`{"widgetName": "matrix",
-                   "widgetID": ${0},
-                   "update": "node",
-                   "data": [${node.m}, ${node.n}, ${node.state}]
-                }`);
     }
 
     node.gfx
@@ -66,7 +62,11 @@ function Matrix(widgetID) {
     console.log('Creating matrix object');
 
     matrix.recalculate = function() {
-
+        ws.send(`{"widgetName": "matrix",
+                   "widgetID": ${0},
+                   "update": "all",
+                   "data": "${matrix.toString()}"
+                }`);
     }
 
     matrix.nodes = new Array(M+2);
@@ -81,10 +81,20 @@ function Matrix(widgetID) {
         
     }
 
+    matrix.update_with = function(packet) {
+        let state_array = Array.from(packet.data).map(item => parseInt(item));
+        for (let m=0; m<matrix.nodes.length; m++) {
+            for (let n = 0; n < matrix.nodes[m].length; n++) {
+                matrix.nodes[m][n].state = state_array[m*matrix.nodes[m].length+n];
+                matrix.nodes[m][n].draw();
+            }
+        }
+    }
+
     matrix.toString = function() {
         var state = new Array();
         matrix.nodes.forEach(rows => { rows.forEach(item => {state.push(item.state); }) });
-        console.log(state);
+        return state.join('');
     }
 
     app.stage.addChild(matrix.visual);
