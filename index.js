@@ -4,6 +4,7 @@ var fs = require('fs');
 var path = require('path');
 var util = require('util');
 const WebSocket = require('ws');
+//const Matrix = require ( 'public/widgets_dev/classes/matrix.js' );
 
 // command line handling
 const argv = require('yargs')
@@ -30,6 +31,8 @@ app.use(express.static(path.join(__dirname, '/public')));
 if (argv.dev) {
     console.log('Using development assets.')
     app.use('/images', express.static(path.join(__dirname, '/public/images' + path_append)));
+    // app.use('/widgets', express.static(path.join(__dirname, '/public/widgets_dev/classes')));
+    // app.use('/widgets', path.join(__dirname, '/public/widgets_dev/classes'));
     app.use('/widgets', express.static(path.join(__dirname, '/public/widgets' + path_append)));
 } else {
     console.log('Using production assets.')
@@ -38,6 +41,7 @@ if (argv.dev) {
 };
 
 app.get('/', function(req, res) {
+	console.log( "Get with no path called!" );
     res.setHeader('Content-Type', 'text/plain');
     res.end('Fill your name');
 });

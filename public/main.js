@@ -32,6 +32,7 @@ const CANVAS_Y_OFFSEY = 70;
 
 const pixi_canvas = document.getElementById("pixi_canvas")
 
+
 function init() {
     app = new Application({
         width: 1600 - 2*(CANVAS_X_OFFSET),
@@ -58,12 +59,12 @@ function init() {
 
 let ws = start_websocket(8080);
 ws.onmessage = function(event) {
-    if (typeof event.data === 'string') {
+    if ( typeof event.data === 'string' ) {
         // parse JSON payload
         try {
-            var packet = JSON.parse(event.data);
-            console.log(packet);
-            if (packet.widgetID == 0) {
+            var packet = JSON.parse( event.data );
+            console.log( "Packet: ", packet );
+            if (packet.widgetID === 0) {
                 widgets[0].update_with(packet);
             } else {
                 console.error('unknown widget');
@@ -91,23 +92,28 @@ function gameLoop(delta) {
 }
 
 function game_init() {
-    console.log('Initializing game state')
+    console.log('Initializing game state');
+    console.log( app );
 
     // matrix widget
-    var matrix = new Matrix({widgetID: 0});
-    widgets.push(matrix);
-    matrix.visual.position.set(550, 450);
+    const matrix = new Matrix(
+		{
+			widgetID: 0
+		}
+	);
+    widgets.push( matrix );
+    matrix.visual.position.set( 550, 450 );
 
     // slider widget
-    for (let sli = 0; sli < 5; sli++) {
-        var slider = new Slider(8, 300, {widgetID: widgets.length+1});
-        slider.visual.position.y = 50*sli;
+    for ( let sli = 0; sli < 5; sli++ ) {
+        var slider = new Slider( 8, 300, { widgetID: widgets.length+1 } );
+        slider.visual.position.y = 50 * sli;
         slider.visual.position.x = 300;
-        widgets.push(slider);
+        widgets.push( slider );
     }
     
     state = play;
-    console.log('Switching state to "play"');
+    console.log( 'Switching state to "play"' );
 }
 
 function play(delta) {

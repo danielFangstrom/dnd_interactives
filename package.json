@@ -9,9 +9,11 @@
   "author": "Ronny Eichler",
   "license": "MIT",
   "dependencies": {
+    "bufferutil": "^4.0.1",
     "express": "^4.17.1",
     "handlebars": "^4.7.2",
     "install": "^0.13.0",
+    "utf-8-validate": "^5.0.2",
     "ws": "^7.2.1",
     "yargs": "^15.1.0"
   },
